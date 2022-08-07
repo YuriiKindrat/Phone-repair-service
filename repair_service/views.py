@@ -1,3 +1,5 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status, mixins
 from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
@@ -96,3 +98,25 @@ class RequestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "user",
+                type=OpenApiTypes.INT,
+                description="Filter by user id (ex. ?user=2)",
+            ),
+            OpenApiParameter(
+                "phone_model",
+                type=OpenApiTypes.STR,
+                description="Filter by phone_model (ex. ?phone_model='phonename')",
+            ),
+            OpenApiParameter(
+                "phone_description",
+                type=OpenApiTypes.STR,
+                description="Filter by phone_description (ex. ?phone_description='phonedescription')",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
